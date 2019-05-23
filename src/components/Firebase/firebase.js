@@ -1,4 +1,5 @@
 import app from "firebase/app";
+import "firebase/auth";
 
 // Remember NOT to add quotes around the values on the .env file
 const config = {
