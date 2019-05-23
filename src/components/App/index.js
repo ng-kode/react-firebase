@@ -9,7 +9,7 @@ import HomePage from "../Home";
 import AccountPage from "../Account";
 import AdminPage from "../Admin";
 import * as ROUTES from "../../constants/routes";
-import { withAuthProvider } from "../Session";
+import { withAuthUserProvider } from "../Session";
 
 function App() {
   return (
@@ -29,4 +29,4 @@ function App() {
   );
 }
 
-export default withAuthProvider(App);
+export default withAuthUserProvider(App);

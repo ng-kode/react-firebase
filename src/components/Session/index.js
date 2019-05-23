@@ -1,6 +1,6 @@
 import AuthUserContext from "./context";
-import withAuthProvider from "./withAuthProvider";
+import withAuthUserProvider from "./withAuthUserProvider";
 
 // just for encapsulation
 
-export { AuthUserContext, withAuthProvider };
+export { AuthUserContext, withAuthUserProvider };
