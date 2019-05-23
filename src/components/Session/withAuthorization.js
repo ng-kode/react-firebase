@@ -5,6 +5,9 @@ import { withRouter } from "react-router-dom";
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
+// condition is a function which will be passed upon use.
+// This gives flexibility for different kinds of authorization
+// (e.g. signin only, admin only, etc)
 const withAuthorization = condition => Component => {
   class AuthorizationWrapper extends React.Component {
     componentDidMount() {
