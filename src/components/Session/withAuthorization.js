@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
+import AuthUserContext from "./context";
 
 // condition is a function which will be passed upon use.
 // This gives flexibility for different kinds of authorization
@@ -23,7 +24,13 @@ const withAuthorization = condition => Component => {
     }
 
     render() {
-      return <Component {...this.props} />;
+      return (
+        <AuthUserContext.Consumer>
+          {authUser =>
+            condition(authUser) ? <Component {...this.props} /> : null
+          }
+        </AuthUserContext.Consumer>
+      );
     }
   }
 
