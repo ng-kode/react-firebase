@@ -1,5 +1,6 @@
 import React from "react";
-import { withAuthorization } from "../Session";
+import { compose } from "recompose";
+import { withAuthorization, withEmailVerification } from "../Session";
 
 function Home(props) {
   return <div>Home</div>;
@@ -8,4 +9,7 @@ function Home(props) {
 // broad-grained authorization, i.e. signin only
 const condition = authUser => authUser !== null;
 
-export default withAuthorization(condition)(Home);
+export default compose(
+  withAuthorization(condition),
+  withEmailVerification
+)(Home);

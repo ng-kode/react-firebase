@@ -45,25 +45,29 @@ class Firebase {
       this.user(authUser.uid)
         .once("value")
         .then(snapshot => {
+          const user = {
+            roles: {},
+            uid: authUser.uid,
+            email: authUser.email,
+            emailVerified: authUser.emailVerified
+          };
           const dbUser = snapshot.val();
 
+          // Registered but not stored in realtime database
           if (dbUser === null) {
-            // Registered but not stored in realtime database
-            return next({
-              roles: {},
-              uid: authUser.uid,
-              email: authUser.email
-            });
+            next(user);
+            return;
           }
 
-          const user = {
-            ...dbUser,
-            roles: dbUser.roles || {},
-            uid: authUser.uid
-          };
+          user.roles = { ...dbUser.roles };
 
           next(user);
         });
+    });
+
+  doSendEmailVerification = () =>
+    this.auth.currentUser.sendEmailVerification({
+      url: process.env.REACT_APP_CONFIRMATION_EMAIL_REDIRECT
     });
 
   // *** User API ***
