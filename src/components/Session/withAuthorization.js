@@ -11,12 +11,17 @@ import AuthUserContext from "./context";
 // (e.g. signin only, admin only, etc)
 const withAuthorization = condition => Component => {
   class AuthorizationWrapper extends React.Component {
+    handleNotAuthorized = () => {
+      console.log("Not Authorized");
+      this.props.history.push(ROUTES.LANDING);
+    };
+
     componentDidMount() {
-      this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
-        if (!condition(authUser)) {
-          this.props.history.push(ROUTES.SIGN_IN);
+      this.listener = this.props.firebase.onAuthUserListener(user => {
+        if (!condition(user)) {
+          this.handleNotAuthorized();
         }
-      });
+      }, this.handleNotAuthorized);
     }
 
     componentWillUnmount() {

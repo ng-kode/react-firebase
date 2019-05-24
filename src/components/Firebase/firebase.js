@@ -35,6 +35,37 @@ class Firebase {
 
   doPasswordUpdate = password => this.auth.currentUser.updatePassword(password);
 
+  onAuthUserListener = (next, fallback) =>
+    this.auth.onAuthStateChanged(authUser => {
+      if (authUser === null) {
+        fallback();
+        return;
+      }
+
+      this.user(authUser.uid)
+        .once("value")
+        .then(snapshot => {
+          const dbUser = snapshot.val();
+
+          if (dbUser === null) {
+            // Registered but not stored in realtime database
+            return next({
+              roles: {},
+              uid: authUser.uid,
+              email: authUser.email
+            });
+          }
+
+          const user = {
+            ...dbUser,
+            roles: dbUser.roles || {},
+            uid: authUser.uid
+          };
+
+          next(user);
+        });
+    });
+
   // *** User API ***
 
   user = uid => this.db.ref(`users/${uid}`);
