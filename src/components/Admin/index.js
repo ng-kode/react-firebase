@@ -84,8 +84,12 @@ class UserItemBase extends Component {
     };
   }
 
+  onSendPasswordResetEmail = () => {
+    this.props.firebase.doPasswordReset(this.state.user.email);
+  };
+
   componentDidMount() {
-    if (this.state.user) {
+    if (this.state.user && Object.keys(this.state.user).length) {
       return;
     }
 
@@ -110,12 +114,17 @@ class UserItemBase extends Component {
     return (
       <div>
         {loading && <p>Loading...</p>}
+
         {user &&
           Object.keys(this.state.user).map(key => (
             <div key={key}>
               <strong>{key}: </strong> {JSON.stringify(user[key])}
             </div>
           ))}
+
+        <button type="button" onClick={this.onSendPasswordResetEmail}>
+          Send Password Reset
+        </button>
       </div>
     );
   }
