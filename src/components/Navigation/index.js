@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 
 import SignOutButton from "../SignOut";
@@ -21,25 +21,28 @@ const Navigation = () => (
 );
 
 const NavigationAuth = ({ authUser }) => (
-  <ul>
-    <li>
-      <Link to={ROUTES.LANDING}>Landing</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.HOME}>Home</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.ACCOUNT}>Account</Link>
-    </li>
-    {authUser.roles[ROLES.ADMIN] && (
+  <Fragment>
+    <p>{authUser.email}</p>
+    <ul>
       <li>
-        <Link to={ROUTES.ADMIN}>Admin</Link>
+        <Link to={ROUTES.LANDING}>Landing</Link>
       </li>
-    )}
-    <li>
-      <SignOutButton />
-    </li>
-  </ul>
+      <li>
+        <Link to={ROUTES.HOME}>Home</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.ACCOUNT}>Account</Link>
+      </li>
+      {authUser.roles[ROLES.ADMIN] && (
+        <li>
+          <Link to={ROUTES.ADMIN}>Admin</Link>
+        </li>
+      )}
+      <li>
+        <SignOutButton />
+      </li>
+    </ul>
+  </Fragment>
 );
 
 const NavigationNonAuth = () => (
