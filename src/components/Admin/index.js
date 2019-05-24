@@ -5,70 +5,47 @@ import { withFirebase } from "../Firebase";
 import { withAuthorization, withEmailVerification } from "../Session";
 import * as ROLES from "../../constants/roles";
 import * as ROUTES from "../../constants/routes";
+import ReadItems from "../Items";
 
 class UserListBase extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      users: []
-    };
-  }
-
-  componentDidMount() {
-    this.setState({ loading: true });
-    this.props.firebase.users().on("value", snapshot => {
-      const usersObject = snapshot.val();
-
-      this.setState({
-        loading: false,
-        users: Object.keys(usersObject).map(key => ({
-          ...usersObject[key],
-          uid: key
-        }))
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    this.props.firebase.users().off();
-  }
-
   render() {
-    const { users, loading } = this.state;
-
     return (
-      <Fragment>
-        {loading && <div>Loading...</div>}
+      <ReadItems
+        fetcher={this.props.firebase.users}
+        render={({ loading, items: users }) => (
+          <Fragment>
+            {loading && <div>Loading...</div>}
 
-        {users.length && (
-          <ul>
-            {users.map(user => (
-              <li key={user.uid}>
-                <span>
-                  <strong>ID: </strong> {user.uid}
-                </span>
-                <span>
-                  <strong>Email</strong> {user.email}
-                </span>
-                <span>
-                  <strong>Username</strong> {user.username}
-                </span>
-                <span>
-                  <Link
-                    to={{
-                      pathname: `${ROUTES.ADMIN}/users/${user.uid}`,
-                      user
-                    }}
-                  >
-                    Details
-                  </Link>
-                </span>
-              </li>
-            ))}
-          </ul>
+            {users.length && (
+              <ul>
+                {users.map(user => (
+                  <li key={user.uid}>
+                    <span>
+                      <strong>ID: </strong> {user.uid}
+                    </span>
+                    <span>
+                      <strong>Email</strong> {user.email}
+                    </span>
+                    <span>
+                      <strong>Username</strong> {user.username}
+                    </span>
+                    <span>
+                      <Link
+                        to={{
+                          pathname: `${ROUTES.ADMIN}/users/${user.uid}`,
+                          user
+                        }}
+                      >
+                        Details
+                      </Link>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Fragment>
         )}
-      </Fragment>
+      />
     );
   }
 }

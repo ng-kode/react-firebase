@@ -1,7 +1,8 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { compose } from "recompose";
 import { withAuthorization, withEmailVerification } from "../Session";
 import { withFirebase } from "../Firebase";
+import ReadItems from "../Items";
 
 function Home(props) {
   return (
@@ -17,36 +18,8 @@ class MessagesBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
-      messages: [],
       text: ""
     };
-  }
-
-  componentDidMount() {
-    this.setState({ loading: true });
-
-    this.props.firebase.messages().on("value", snapshot => {
-      const messageObject = snapshot.val();
-
-      if (messageObject) {
-        const messages = Object.keys(messageObject).map(key => ({
-          ...messageObject[key],
-          uid: key
-        }));
-
-        this.setState({
-          messages,
-          loading: false
-        });
-      } else {
-        this.setState({ loading: false, messages: null });
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.props.firebase.messages().off();
   }
 
   onChangeText = event => {
@@ -64,16 +37,23 @@ class MessagesBase extends React.Component {
   };
 
   render() {
-    const { messages, loading, text } = this.state;
+    const { text } = this.state;
     return (
       <div>
-        {loading && <div>Loading ...</div>}
+        <ReadItems
+          fetcher={this.props.firebase.messages}
+          render={({ loading, items: messages }) => (
+            <Fragment>
+              {loading && <div>Loading ...</div>}
 
-        {messages ? (
-          <MessageList messages={messages} />
-        ) : (
-          <div>There are no messages</div>
-        )}
+              {messages ? (
+                <MessageList messages={messages} />
+              ) : (
+                <div>There are no messages</div>
+              )}
+            </Fragment>
+          )}
+        />
 
         <form onSubmit={this.onCreateMessage}>
           <input type="text" value={text} onChange={this.onChangeText} />
