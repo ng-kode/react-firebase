@@ -11,10 +11,24 @@ export default class ReadItems extends Component {
 
   componentDidMount() {
     this.setState({ loading: true });
+    this.doGetItems();
+  }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.limit !== this.props.limit) {
+      this.doGetItems();
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.fetcher().off();
+  }
+
+  doGetItems = () => {
     this.props
       .fetcher()
       .orderByChild("createdAt")
+      .limitToLast(this.props.limit || 5)
       .on("value", snapshot => {
         const itemsObject = snapshot.val();
 
@@ -30,11 +44,7 @@ export default class ReadItems extends Component {
           this.setState({ loading: false, items: null });
         }
       });
-  }
-
-  componentWillUnmount() {
-    this.props.fetcher().off();
-  }
+  };
 
   render() {
     return <Fragment>{this.props.render(this.state)}</Fragment>;

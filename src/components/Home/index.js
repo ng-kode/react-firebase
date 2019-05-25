@@ -22,7 +22,8 @@ class MessagesBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: ""
+      text: "",
+      limit: 3
     };
   }
 
@@ -54,22 +55,32 @@ class MessagesBase extends React.Component {
     });
   };
 
+  onNextPage = () => {
+    this.setState(state => ({ limit: state.limit + 5 }));
+  };
+
   render() {
-    const { text } = this.state;
+    const { text, limit } = this.state;
     return (
       <div>
         <ReadItems
           fetcher={this.props.firebase.messages}
+          limit={limit}
           render={({ loading, items: messages }) => (
             <Fragment>
               {loading && <div>Loading ...</div>}
 
               {messages ? (
-                <MessageList
-                  messages={messages}
-                  onEditMessage={this.onEditMessage}
-                  onRemoveMessage={this.onRemoveMessage}
-                />
+                <Fragment>
+                  <MessageList
+                    messages={messages}
+                    onEditMessage={this.onEditMessage}
+                    onRemoveMessage={this.onRemoveMessage}
+                  />
+                  <button type="button" onClick={this.onNextPage}>
+                    More
+                  </button>
+                </Fragment>
               ) : (
                 <div>There are no messages</div>
               )}
