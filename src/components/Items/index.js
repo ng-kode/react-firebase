@@ -12,21 +12,24 @@ export default class ReadItems extends Component {
   componentDidMount() {
     this.setState({ loading: true });
 
-    this.props.fetcher().on("value", snapshot => {
-      const itemsObject = snapshot.val();
+    this.props
+      .fetcher()
+      .orderByChild("createdAt")
+      .on("value", snapshot => {
+        const itemsObject = snapshot.val();
 
-      if (itemsObject) {
-        this.setState({
-          loading: false,
-          items: Object.keys(itemsObject).map(key => ({
-            ...itemsObject[key],
-            uid: key
-          }))
-        });
-      } else {
-        this.setState({ loading: false, items: null });
-      }
-    });
+        if (itemsObject) {
+          this.setState({
+            loading: false,
+            items: Object.keys(itemsObject).map(key => ({
+              ...itemsObject[key],
+              uid: key
+            }))
+          });
+        } else {
+          this.setState({ loading: false, items: null });
+        }
+      });
   }
 
   componentWillUnmount() {
