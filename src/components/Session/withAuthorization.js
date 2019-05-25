@@ -12,7 +12,6 @@ import AuthUserContext from "./context";
 const withAuthorization = condition => Component => {
   class AuthorizationWrapper extends React.Component {
     handleNotAuthorized = () => {
-      console.log("Not Authorized");
       this.props.history.push(ROUTES.LANDING);
     };
 
