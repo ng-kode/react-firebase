@@ -1,6 +1,10 @@
 import React, { Fragment } from "react";
 import { compose } from "recompose";
-import { withAuthorization, withEmailVerification } from "../Session";
+import {
+  withAuthorization,
+  withEmailVerification,
+  AuthUserContext
+} from "../Session";
 import { withFirebase } from "../Firebase";
 import ReadItems from "../Items";
 
@@ -26,9 +30,10 @@ class MessagesBase extends React.Component {
     this.setState({ text: event.target.value });
   };
 
-  onCreateMessage = event => {
+  onCreateMessage = (event, authUser) => {
     this.props.firebase.messages().push({
-      text: this.state.text
+      text: this.state.text,
+      userId: authUser.uid
     });
 
     this.setState({ text: "" });
@@ -55,10 +60,14 @@ class MessagesBase extends React.Component {
           )}
         />
 
-        <form onSubmit={this.onCreateMessage}>
-          <input type="text" value={text} onChange={this.onChangeText} />
-          <button type="submit">Send</button>
-        </form>
+        <AuthUserContext.Consumer>
+          {authUser => (
+            <form onSubmit={event => this.onCreateMessage(event, authUser)}>
+              <input type="text" value={text} onChange={this.onChangeText} />
+              <button type="submit">Send</button>
+            </form>
+          )}
+        </AuthUserContext.Consumer>
       </div>
     );
   }
